@@ -5,6 +5,10 @@ from collections import defaultdict
 
 from tabulate import tabulate
 
+REPORTS = {
+    'performance': lambda data: calc_performance(data),
+}
+
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='Creates report from csv files and displayes it in terminal.')
@@ -17,9 +21,10 @@ def create_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         '--report',
+        choices=REPORTS.keys(),
         type=str,
         required=True,
-        help='Specify the name of the report.',
+        help=f'Specify the name of the report. Available reports: {", ".join(REPORTS.keys())}.',
     )
 
     return parser
@@ -42,7 +47,7 @@ def get_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     return args
 
 
-def load_employees_data(file_paths: list[str]) -> list[dict]:
+def load_employees_data(file_paths: list[str]) -> list[dict[str, str]]:
     employees_data = []
 
     for file_path in file_paths:
@@ -53,17 +58,16 @@ def load_employees_data(file_paths: list[str]) -> list[dict]:
     return employees_data
 
 
-def calc_performance(employees_data: list) -> dict[float]:
-    performance = defaultdict(lambda: defaultdict(int))
+def calc_performance(employees_data: list[dict]) -> dict[str, float]:
+    performance_by_pos = defaultdict(list)
 
-    for employee_data in employees_data:
-        performance[employee_data['position']]['performance_sum'] += float(employee_data['performance'])
-        performance[employee_data['position']]['cnt'] += 1
+    for employee in employees_data:
+        performance_by_pos[employee['position']].append(float(employee['performance']))
 
-    for position in performance:
-        performance[position] = performance[position]['performance_sum'] / performance[position]['cnt']
+    for position in performance_by_pos:
+        performance_by_pos[position] = sum(performance_by_pos[position]) / len(performance_by_pos[position])
 
-    return performance
+    return performance_by_pos
 
 
 def display_report(report: dict, grouping_col_name: str, report_name: str, is_sorted: bool = True, is_reverse_sort: bool = True) -> None:
@@ -84,9 +88,9 @@ def main():
     args = get_args(parser)
 
     employees_data = load_employees_data(args.files)
-    performance = calc_performance(employees_data)
+    report = REPORTS[args.report](employees_data)
 
-    display_report(report=performance, grouping_col_name='position', report_name=args.report)
+    display_report(report, grouping_col_name='position', report_name=args.report)
 
 
 if __name__ == "__main__":
