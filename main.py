@@ -40,8 +40,8 @@ def validate_args(parser: argparse.ArgumentParser, args: argparse.Namespace) -> 
             parser.error(f"Incorrect file format ({ext}): {file_path}. All files should be in 'csv' format.")
 
 
-def get_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    args = parser.parse_args()
+def get_args(parser: argparse.ArgumentParser, inp_args: list[str] = None) -> argparse.Namespace:
+    args = parser.parse_args(inp_args)
     validate_args(parser, args)
 
     return args
