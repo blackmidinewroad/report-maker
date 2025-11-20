@@ -11,7 +11,7 @@ REPORTS = {
 
 
 def create_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description='Creates report from csv files and displayes it in terminal.')
+    parser = argparse.ArgumentParser(description='Creates report from csv files and displays it in terminal.')
     parser.add_argument(
         '--files',
         nargs='+',
