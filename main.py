@@ -5,10 +5,6 @@ from collections import defaultdict
 
 from tabulate import tabulate
 
-REPORTS = {
-    'performance': lambda data: calc_performance(data),
-}
-
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='Creates report from csv files and displays it in terminal.')
@@ -81,6 +77,11 @@ def display_report(report: dict, grouping_col_name: str, report_name: str, is_so
         table = [(i, group_col, f'{res:.2f}') for i, (group_col, res) in enumerate(report.items(), 1)]
 
     print(tabulate(table, headers=headers, disable_numparse=True))
+
+
+REPORTS = {
+    'performance': calc_performance,
+}
 
 
 def main():
