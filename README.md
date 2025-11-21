@@ -25,6 +25,10 @@
 
 
 ## Пример запуска скрипта
+   ```shell
+    python main.py --files employees1.csv employees2.csv --report performance
+   ```
+
 ![Run Example](screenshots/run_example.png)
 
 
